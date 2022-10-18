@@ -1,0 +1,12 @@
+<p>login works!</p>
+<form [formGroup] = "loginForm" (ngSubmit)="onSubmit()">
+    <p>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" formControlName="username">
+    </p>
+    <p>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" formControlName="password">
+    </p>
+    <button type="submit">Login</button>
+</form> 
