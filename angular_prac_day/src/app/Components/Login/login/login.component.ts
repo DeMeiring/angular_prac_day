@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
     return this.loginForm.get('password');
   }
 
-  constructor(private formBuilder:FormBuilder,private auth:AuthService) {
+  constructor(private formBuilder:FormBuilder,private auth:AuthService, private router:Router) {
    }
 
   ngOnInit(): void {
@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
         this.auth.getToken(this.loginForm.value.username!, this.loginForm.value.password!).subscribe(data=>{
             //console.log(data.access_token);
             localStorage.setItem('token',data.access_token);
-
+            this.router.navigate(['editInfo']);
         });
     }
   }
