@@ -31,10 +31,11 @@ export class EditInfoComponent implements OnInit {
   }
 
   onSubmit():void{
-    // this.userService.updateUser(this.editForm.value.firstname, this.editForm.value.lastname, this.editForm.value.email).subscribe(data => {
-    //   this.router.navigate(['homeScreen']);
-    // });
-    this.LuhnValidation();
+     this.userService.updateUser(this.editForm.value.firstname, this.editForm.value.lastname, this.editForm.value.email).subscribe(data => {
+      if(this.editForm.valid && this.LuhnValidation()){
+        this.router.navigate(['homeScreen']);
+      }
+     });
   }
 
   LuhnValidation(){
@@ -42,7 +43,7 @@ export class EditInfoComponent implements OnInit {
     let IdNumber = new String(this.editForm.value.IdNumber);
     let idLength = IdNumber.length;
     let tempNums = new Array().fill(0);
-    let validator = IdNumber.charAt(idLength-1);
+    let validator = Number(IdNumber.charAt(idLength-1));
     let payload = IdNumber.slice(0,idLength-1);
     //use for loop to populate array with mulitplied numbers where applicable
     for(var i=idLength-1;i>0;i--){
@@ -51,30 +52,28 @@ export class EditInfoComponent implements OnInit {
       let numConverted = Number(currentNum);
       if(numConverted%2 != 0){
         tempNums[i] = numConverted*2;
+        if(tempNums[i]>9){
+          var digitTotal = 0;
+          var digits = tempNums[i].toString().split('');
+          var realdigits = digits.map(Number);
+          realdigits.forEach((digit:number)=>{
+          digitTotal+= Number(digit);
+        })
+          tempNums[i]=digitTotal;
+        }
       }else{
         tempNums[i] = numConverted
       }
     }
-    //run through tempNums array and clean up digits larger than 9 by summing tem together
-    tempNums.forEach((number)=>{
-      if(number>9){
-        var digitTotal = 0;
-        var digits = number.toString().split('');
-        var realdigits = digits.map(Number);
-        realdigits.forEach((digit:number)=>{
-            digitTotal+= Number(digit);
-        })
-        number = digitTotal;
-      }
-    });
 
     let total =0;
     tempNums.forEach((x:number)=>{
         total += x;
     });
 
-    total = (12 - (total%12))%12;
-    console.log(total);
+    idLength -= 1;
+    total = (idLength - (total%idLength))%idLength;
+    return  total == validator;
 
   }
 
